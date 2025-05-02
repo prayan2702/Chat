@@ -39,7 +39,7 @@ margin: 10px 0;
 if 'text_entries' not in st.session_state:
   st.session_state.text_entries = []
 if 'room_id' not in st.session_state:
-st.session_state.room_id = str(uuid.uuid4())[:8]
+  st.session_state.room_id = str(uuid.uuid4())[:8]
 
 # Function to save entries
 def save_entries():
@@ -48,11 +48,11 @@ json.dump(st.session_state.text_entries, f)
 
 # Function to load entries
 def load_entries():
-try:
-with open(f"entries_{st.session_state.room_id}.json", "r") as f:
-st.session_state.text_entries = json.load(f)
-except (FileNotFoundError, json.JSONDecodeError):
-st.session_state.text_entries = []
+  try:
+    with open(f"entries_{st.session_state.room_id}.json", "r") as f:
+    st.session_state.text_entries = json.load(f)
+  except (FileNotFoundError, json.JSONDecodeError):
+    st.session_state.text_entries = []
 
 # Load entries when the app starts
 load_entries()
@@ -64,9 +64,9 @@ st.markdown("Type text on one device and copy it from another device using the s
 # Room ID section
 col1, col2 = st.columns([3,1])
 with col1:
-new_room_id = st.text_input("Room ID", value=st.session_state.room_id)
+  new_room_id = st.text_input("Room ID", value=st.session_state.room_id)
 with col2:
-if st.button("Generate New Room"):
+  if st.button("Generate New Room"):
 st.session_state.room_id = str(uuid.uuid4())[:8]
 st.session_state.text_entries = []
 save_entries()

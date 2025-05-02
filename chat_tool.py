@@ -37,7 +37,7 @@ margin: 10px 0;
 
 # Initialize session state
 if 'text_entries' not in st.session_state:
-st.session_state.text_entries = []
+  st.session_state.text_entries = []
 if 'room_id' not in st.session_state:
 st.session_state.room_id = str(uuid.uuid4())[:8]
 

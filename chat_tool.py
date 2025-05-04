@@ -69,7 +69,7 @@ st.markdown("Type text on one device and copy it from any other device")
 with st.form("text_form"):
     user_text = st.text_area("Type your text here:", height=150, key="user_text")
     submitted = st.form_submit_button("Save to Shared Clipboard")
-    
+
     if submitted and user_text:
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         st.session_state.text_entries.insert(0, {
@@ -88,15 +88,15 @@ if not st.session_state.text_entries:
     st.info("Clipboard is empty. Add some text above.")
 else:
     latest_entry = st.session_state.text_entries[0]
-    
+
     st.markdown("**Latest Entry:**")
     st.markdown(f'<div class="timestamp">Last updated: {latest_entry["time"]}</div>', unsafe_allow_html=True)
     st.code(latest_entry["text"], language="text")
-    
+
     if st.button("Copy Latest Text"):
         st.code(latest_entry["text"], language="text")
         st.success("Text ready to copy from the box above!")
-    
+
     # Show history (optional)
     with st.expander("View History (Last 20 entries)"):
         for i, entry in enumerate(st.session_state.text_entries[1:], 1):

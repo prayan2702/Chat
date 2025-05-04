@@ -23,10 +23,6 @@ st.markdown("""
         background-color: #4CAF50;
         color: white;
         font-weight: bold;
-        margin-bottom: 10px;
-    }
-    .clear-btn button {
-        background-color: #f44336 !important;
     }
     .code-box {
         background-color: #f0f2f6;
@@ -48,14 +44,6 @@ st.markdown("""
 # Initialize session state
 if 'text_entries' not in st.session_state:
     st.session_state.text_entries = []
-if 'clear_text' not in st.session_state:
-    st.session_state.clear_text = False
-if 'user_text' not in st.session_state:
-    st.session_state.user_text = ""
-if 'save_clicked' not in st.session_state:
-    st.session_state.save_clicked = False
-if 'clear_clicked' not in st.session_state:
-    st.session_state.clear_clicked = False
 
 # Function to save entries
 def save_entries():
@@ -78,53 +66,20 @@ st.title("📋 Common Clipboard")
 st.markdown("Type text on one device and copy it from any other device")
 
 # Text input section
-def form_callback():
-    if st.session_state.save_clicked:
-        user_text = st.session_state.user_text_area
-        if user_text:
-            timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            st.session_state.text_entries.insert(0, {
-                "text": user_text,
-                "time": timestamp
-            })
-            # Keep only the last 20 entries
-            st.session_state.text_entries = st.session_state.text_entries[:20]
-            save_entries()
-            st.session_state.clear_text = True
-    elif st.session_state.clear_clicked:
-        st.session_state.clear_text = True
-
 with st.form("text_form"):
-    # Text area with separate key
-    st.text_area("Type your text here:", 
-                height=150, 
-                key="user_text_area",
-                value=st.session_state.user_text)
+    user_text = st.text_area("Type your text here:", height=150, key="user_text")
+    submitted = st.form_submit_button("Save to Shared Clipboard")
     
-    col1, col2 = st.columns([1,1])
-    with col1:
-        # Save button without key parameter
-        if st.form_submit_button("Save to Shared Clipboard"):
-            st.session_state.save_clicked = True
-            st.session_state.clear_clicked = False
-    with col2:
-        # Clear button without key parameter
-        if st.form_submit_button("Clear Text"):
-            st.session_state.clear_clicked = True
-            st.session_state.save_clicked = False
-    
-    # Handle the form submission
-    if st.session_state.save_clicked or st.session_state.clear_clicked:
-        form_callback()
-
-# Clear the text area if needed
-if st.session_state.clear_text:
-    st.session_state.user_text = ""
-    st.session_state.user_text_area = ""
-    st.session_state.clear_text = False
-    st.session_state.save_clicked = False
-    st.session_state.clear_clicked = False
-    st.rerun()
+    if submitted and user_text:
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        st.session_state.text_entries.insert(0, {
+            "text": user_text,
+            "time": timestamp
+        })
+        # Keep only the last 20 entries
+        st.session_state.text_entries = st.session_state.text_entries[:20]
+        save_entries()
+        st.success("Text saved! Refresh other devices to see updates.")
 
 # Display section
 st.subheader("Shared Clipboard Contents")
@@ -147,15 +102,6 @@ else:
         for i, entry in enumerate(st.session_state.text_entries[1:], 1):
             st.markdown(f"**Entry {i}** ({entry['time']})")
             st.code(entry["text"], language="text")
-
-# Clear all entries button
-st.markdown("---")
-if st.button("🚨 Clear ALL Entries", key="clear_all"):
-    st.session_state.text_entries = []
-    save_entries()
-    st.success("All entries cleared!")
-    time.sleep(1)
-    st.rerun()
 
 # Auto-refresh every 15 seconds
 st.markdown("""

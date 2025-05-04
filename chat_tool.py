@@ -52,6 +52,10 @@ if 'clear_text' not in st.session_state:
     st.session_state.clear_text = False
 if 'user_text' not in st.session_state:
     st.session_state.user_text = ""
+if 'save_clicked' not in st.session_state:
+    st.session_state.save_clicked = False
+if 'clear_clicked' not in st.session_state:
+    st.session_state.clear_clicked = False
 
 # Function to save entries
 def save_entries():
@@ -91,7 +95,7 @@ def form_callback():
         st.session_state.clear_text = True
 
 with st.form("text_form"):
-    # Use a different key for the text_area
+    # Text area with separate key
     st.text_area("Type your text here:", 
                 height=150, 
                 key="user_text_area",
@@ -99,16 +103,18 @@ with st.form("text_form"):
     
     col1, col2 = st.columns([1,1])
     with col1:
-        st.form_submit_button("Save to Shared Clipboard", 
-                            on_click=lambda: st.session_state.update({'save_clicked': True, 'clear_clicked': False}),
-                            key="save_button")
+        # Save button without key parameter
+        if st.form_submit_button("Save to Shared Clipboard"):
+            st.session_state.save_clicked = True
+            st.session_state.clear_clicked = False
     with col2:
-        st.form_submit_button("Clear Text", 
-                            on_click=lambda: st.session_state.update({'clear_clicked': True, 'save_clicked': False}),
-                            key="clear_button")
+        # Clear button without key parameter
+        if st.form_submit_button("Clear Text"):
+            st.session_state.clear_clicked = True
+            st.session_state.save_clicked = False
     
     # Handle the form submission
-    if 'save_clicked' in st.session_state or 'clear_clicked' in st.session_state:
+    if st.session_state.save_clicked or st.session_state.clear_clicked:
         form_callback()
 
 # Clear the text area if needed

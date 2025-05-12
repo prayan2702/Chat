@@ -229,11 +229,11 @@ with tab2:
     else:
         st.info("No files uploaded yet. Upload a file to see it here.")
 
-# Auto-refresh every 15 seconds
-st.markdown("""
-    <script>
-    setTimeout(function(){
-        window.location.reload(1);
-    }, 15000);
-    </script>
-    """, unsafe_allow_html=True)
+# # Auto-refresh every 15 seconds
+# st.markdown("""
+#     <script>
+#     setTimeout(function(){
+#         window.location.reload(1);
+#     }, 15000);
+#     </script>
+#     """, unsafe_allow_html=True)

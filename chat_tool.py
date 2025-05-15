@@ -174,11 +174,12 @@ with tab2:
 
     if uploaded_file is not None:
         file_path = os.path.join(UPLOAD_FOLDER, uploaded_file.name)
-        with open(file_path, "wb") as f:
-            f.write(uploaded_file.getbuffer())
-        st.success(f"✅ File `{uploaded_file.name}` successfully uploaded!")
-        st.rerun()
-
+        if not os.path.exists(file_path):  # Avoid duplicate writes on rerun
+            with open(file_path, "wb") as f:
+                f.write(uploaded_file.getbuffer())
+            st.success(f"✅ File `{uploaded_file.name}` successfully uploaded!")
+        else:
+            st.info(f"📁 File `{uploaded_file.name}` already uploaded.")
     st.subheader("Available Files for Download")
     files = os.listdir(UPLOAD_FOLDER)
     if files:

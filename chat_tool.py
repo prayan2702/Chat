@@ -89,6 +89,18 @@ tab1, tab2 = st.tabs(["📋 Shared Clipboard", "📂 File Sharing"])
 with tab1:
     st.markdown("Type text on one device and copy it from any other device")
 
+    # 🔄 Add a Refresh button to reload clipboard data
+    col_refresh, col_empty = st.columns([1, 4])
+    if col_refresh.button("🔄 Refresh Clipboard"):
+        try:
+            with open("clipboard_entries.json", "r") as f:
+                st.session_state.text_entries = json.load(f)
+            st.success("Clipboard refreshed!")
+            time.sleep(1)
+            st.rerun()
+        except Exception as e:
+            st.error(f"Error refreshing clipboard: {e}")
+
     def handle_form_submission():
         if st.session_state.save_clicked:
             user_text = st.session_state.user_input_text
@@ -165,7 +177,7 @@ with tab1:
         st.success("All clipboard entries cleared!")
         time.sleep(1)
         st.rerun()
-
+        
 with tab2:
     st.markdown("Upload and download files between devices")
 

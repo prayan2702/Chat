@@ -89,18 +89,6 @@ tab1, tab2 = st.tabs(["📋 Shared Clipboard", "📂 File Sharing"])
 with tab1:
     st.markdown("Type text on one device and copy it from any other device")
 
-    # 🔄 Add a Refresh button to reload clipboard data
-    col_refresh, col_empty = st.columns([1, 4])
-    if col_refresh.button("🔄 Refresh Clipboard"):
-        try:
-            with open("clipboard_entries.json", "r") as f:
-                st.session_state.text_entries = json.load(f)
-            st.success("Clipboard refreshed!")
-            time.sleep(1)
-            st.rerun()
-        except Exception as e:
-            st.error(f"Error refreshing clipboard: {e}")
-
     def handle_form_submission():
         if st.session_state.save_clicked:
             user_text = st.session_state.user_input_text
@@ -157,18 +145,32 @@ with tab1:
         st.markdown(f'<div class="timestamp">Last updated: {latest_entry["time"]}</div>', unsafe_allow_html=True)
         st.code(latest_entry["text"], language="text")
 
-        # ✅ Copy icon with JS
+        # ✅ Latest entry copy button with "Copied!" feedback
         components.html(f"""
-            <input type="text" value="{latest_entry['text']}" id="copyText" style="position:absolute; left:-1000px;">
-            <button onclick="navigator.clipboard.writeText(document.getElementById('copyText').value)">
-                📋 Copy Text
-            </button>
+            <input type="text" value="{latest_entry['text']}" id="copyText_latest" style="position:absolute; left:-1000px;">
+            <button id="copyBtn_latest" onclick="
+                navigator.clipboard.writeText(document.getElementById('copyText_latest').value);
+                var btn = document.getElementById('copyBtn_latest');
+                btn.innerHTML = '✅ Copied!';
+                setTimeout(function(){{btn.innerHTML='📋 Copy Text';}}, 2000);
+            ">📋 Copy Text</button>
         """, height=50)
 
         with st.expander("View History (Last 20 entries)"):
             for i, entry in enumerate(st.session_state.text_entries[1:], 1):
                 st.markdown(f"**Entry {i}** ({entry['time']})")
                 st.code(entry["text"], language="text")
+
+                # ✅ History entry copy button with "Copied!" feedback
+                components.html(f"""
+                    <input type="text" value="{entry['text']}" id="copyText{i}" style="position:absolute; left:-1000px;">
+                    <button id="copyBtn{i}" onclick="
+                        navigator.clipboard.writeText(document.getElementById('copyText{i}').value);
+                        var btn = document.getElementById('copyBtn{i}');
+                        btn.innerHTML = '✅ Copied!';
+                        setTimeout(function(){{btn.innerHTML='📋 Copy Text';}}, 2000);
+                    ">📋 Copy Text</button>
+                """, height=50)
 
     st.markdown("---")
     if st.button("🚨 Clear ALL Clipboard Entries", key="clear_all"):
@@ -177,7 +179,7 @@ with tab1:
         st.success("All clipboard entries cleared!")
         time.sleep(1)
         st.rerun()
-        
+
 with tab2:
     st.markdown("Upload and download files between devices")
 

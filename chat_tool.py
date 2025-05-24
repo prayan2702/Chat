@@ -173,6 +173,9 @@ with tab1:
                 """, height=50)
 
     st.markdown("---")
+    # ✅ New Refresh Clipboard button
+    if st.button("🔄 Refresh Clipboard"):
+        st.rerun()
     if st.button("🚨 Clear ALL Clipboard Entries", key="clear_all"):
         st.session_state.text_entries = []
         save_entries()
